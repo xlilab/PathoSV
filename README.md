@@ -17,9 +17,10 @@ The web server includes an advanced feature using a Retrieval-Augmented Generati
 - [Installation](#installation)
 - [Annotation Data](#annotation-data)
 - [Usage Workflow](#usage-workflow)
-  - [Step 1 (Optional): SV Merging and Pre-processing](#step-1-optional-sv-merging-and-pre-processing)
-  - [Step 2: Background Allele Frequency (AF) Annotation](#step-2-background-allele-frequency-af-annotation)
-  - [Step 3: Pathogenicity Annotation](#step-3-pathogenicity-annotation)
+  - [Step 1: SV Calling and Quality Control (QC)](#step-1-sv-calling-and-quality-control-qc)
+  - [Step 2 (Optional): SV Merging and Pre-processing](#step-2-optional-sv-merging-and-pre-processing)
+  - [Step 3: Background Allele Frequency (AF) Annotation](#step-3-background-allele-frequency-af-annotation)
+  - [Step 4: Pathogenicity Annotation](#step-4-pathogenicity-annotation)
 - [Example Output](#example-output)
 - [Repository Structure](#repository-structure)
 - [Data and Code Availability](#data-and-code-availability)
@@ -70,7 +71,26 @@ The annotation scripts require several reference data files. These files should 
 
 ## Usage Workflow
 
-### Step 1 (Optional): SV Merging and Pre-processing
+### Step 1: SV Calling and Quality Control (QC)
+
+Accurate downstream analysis begins with high-quality SV calls. While **Manta** is a leading tool known for its speed and precise breakpoint detection, its reliance on paired-end and split-read evidence can lead to **false-positive** deletions and duplications because it doesn't use a read-depth strategy. 
+
+To enhance accuracy, our workflow integrates evidence from complementary tools to filter Manta's output. We use the read-depth based callers **CNVnator** and **Lumpy**, along with the SV re-genotyper **Paragraph**, to remove false-positive variants and produce a high-confidence callset.
+
+![Manta SV QC Workflow](图片/manta_sv_qc_workflow.png)
+
+#### QC Workflow Overview
+
+1.  **Initial Calling**: Perform SV calling on each sample using **Manta**, **Lumpy**, and **CNVnator**.
+2.  **Information Extraction**: Use `bedtools` to extract key information (chromosome, start, end, SV type, and length) from the Lumpy and CNVnator VCF files.
+3.  **Partition Manta Calls**: Split the Manta SV calls into two groups based on length: those less than 200 bp and those 200 bp or greater.
+4.  **Re-genotype Short SVs**: Input the short SVs (< 200 bp) into **Paragraph** for re-genotyping to confirm their presence.
+5.  **Filter and Annotate**: Process the Manta calls, Lumpy/CNVnator data, and Paragraph output using our custom `manta_qc.py` script. This script applies the filtering logic and produces two headerless VCF files: one with filter annotations (`*_mark_no_header.vcf`) and another with only the filtered, high-confidence calls (`*_filtered_no_header.vcf`).
+6.  **Finalize VCFs**: Add the original VCF headers back to the two output files.
+
+The complete bash script for this pipeline can be found in `code/filter_manta_sv_pipeline.sh`, and the core Python logic is in `code/manta_qc.py`.
+
+### Step 2 (Optional): SV Merging and Pre-processing
 
 Before annotation, it is common to merge SV callsets from multiple samples or callers.
 
@@ -93,7 +113,7 @@ It is also critical to filter out SVs in known problematic genomic regions (e.g.
 
 ---
 
-### Step 2: Background Allele Frequency (AF) Annotation
+### Step 3: Background Allele Frequency (AF) Annotation
 
 This script annotates your input SVs with their allele frequencies from our background population database.
 
@@ -122,7 +142,7 @@ python /path/to/sv_background_af_annotation.py \
 * `[output]_background_af_annotation_rare.txt`: A subset of the above file containing only rare SVs.
 
 ---
-### Step 3: Pathogenicity Annotation
+### Step 4: Pathogenicity Annotation
 This is the core script that annotates SVs with genomic information, constraint scores, ClinVar data, and the tissue-specific **Transcript Disruption Ratio (TDR)**.
 
 **Usage:**
