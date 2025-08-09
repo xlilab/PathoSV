@@ -103,7 +103,8 @@ python /path/to/sv_background_af_annotation.py \
     --sv your_input_svs.vcf \
     --o your_output_prefix \
     [--threshold 0.01] \
-    [--rare True]```
+    [--rare True]
+```
 
 **Arguments:**
 
@@ -132,7 +133,8 @@ python /path/to/sv_pathogenic_annotaion.py \
     --exon /path/to/ref_dir/gencode.v26.annotation_exon_info.txt \
     --gnocchi /path/to/ref_dir/constraint_z_genome_1kb.qc.download.txt.gz \
     --clinvar /path/to/ref_dir/clinvar_20241027_sv_info.txt \
-    --tpm_trans /path/to/ref_dir/55tissues_p10_v26_transcript_tpm_mean.txt```
+    --tpm_trans /path/to/ref_dir/55tissues_p10_v26_transcript_tpm_mean.txt
+```
 
 
 
