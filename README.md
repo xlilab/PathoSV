@@ -81,6 +81,7 @@ We recommend using [SURVIVOR](https://github.com/fritzsedlazeck/SURVIVOR) for me
 ```bash
 # Create a file listing all VCF files to be merged
 ls *.vcf > sample_files.txt
+```
 
 # Run SURVIVOR merge
 # Parameters: sample_list, max_distance, min_callers_supporting, type_and_strand_consistency, min_length, output_vcf
