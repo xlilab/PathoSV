@@ -5,6 +5,8 @@
 
 **PathoSV** is a computational framework to identify and prioritize pathogenic structural variants (SVs) by quantifying their dosage-disrupting impact within a specific tissue context. It is particularly effective for diagnosing rare genetic disorders, such as neurodegenerative conditions.
 
+<img width="757" height="455" alt="image" src="https://github.com/user-attachments/assets/94dad7c0-a0ce-44b4-8a8c-1ba854d34f1d" />
+
 ### Live Web Server
 For users who prefer a graphical interface or do not wish to install the tool locally, we provide a user-friendly web server:
 **[https://www.biosino.org/pathosv/](https://www.biosino.org/pathosv/)**
