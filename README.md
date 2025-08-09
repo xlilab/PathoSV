@@ -136,5 +136,37 @@ python /path/to/sv_pathogenic_annotaion.py \
     --tpm_trans /path/to/ref_dir/55tissues_p10_v26_transcript_tpm_mean.txt
 ```
 
+**Arguments:**
 
+* `--sv`: (Required) Input SV file (must have a header with CHR, START, END, SVTYPE).
+* `--o`: (Required) Output file prefix.
+* `--tissue`: (Optional) Tissue of interest for TDR calculation (e.g., "Retina", "Cerebellum"). If `None`, transcriptome annotation is skipped.
+* `--gene`, `--exon`, `--gnocchi`, `--clinvar`, `--tpm_trans`: (Optional) Paths to reference files. Defaults to filenames within a local `ref_dir/`.
+
+---
+### Example Output
+The primary output is a text file where each row represents an SV-gene annotation. Key columns include:
+
+* **SYMBOL**: Gene symbol.
+* **Consequence**: How the SV intersects the gene (e.g., `Overlap exon`, `Overlap all gene`).
+* **Gnocchi**: Max genomic constraint score in the SV region.
+* **Phenotypes**: OMIM phenotypes and inheritance patterns.
+* **GO_BP, GO_CC, GO_MF**: Gene Ontology terms.
+* **ClinVar_CLNSIG**: ClinVar pathogenicity.
+* **Sum_truncated_trascript_tpm**: Sum of TPMs for transcripts disrupted by the SV in the specified tissue.
+* **Gene_tpm**: Total TPM of all transcripts for the gene in that tissue.
+* **Truncated_ratio**: The calculated **TDR**. A value > 0.25 is prioritized as potentially pathogenic.
+---
+### Data and Code Availability
+* **PathoSV Code:** The source code for the PathoSV pipeline is available in this repository.
+* **MoDs:** The Map of Dosage sensitivity (MoDs) metric and code are available at [https://github.com/xlilab/MoDs](https://github.com/xlilab/MoDs).
+* **Public Data:** Data from GTEx and the 1000 Genomes Project are publicly available.
+* **Study Data:** Processed data and SV calls from the IRD and HA cohorts have been deposited in the National Omics Data Encyclopedia (NODE) under accession numbers OEP004860 (IRD) and OEZ00021280 (HA). Access is subject to committee approval.
+
+---
+### How to Cite
+If you use PathoSV in your research, please cite our paper:
+
+```bibtex
+# BibTeX entry will be provided upon publication.
 
