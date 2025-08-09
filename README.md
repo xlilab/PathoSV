@@ -77,7 +77,7 @@ Accurate downstream analysis begins with high-quality SV calls. While **Manta** 
 
 To enhance accuracy, our workflow integrates evidence from complementary tools to filter Manta's output. We use the read-depth based callers **CNVnator** and **Lumpy**, along with the SV re-genotyper **Paragraph**, to remove false-positive variants and produce a high-confidence callset.
 
-![Manta SV QC Workflow](图片/manta_sv_qc_workflow.png)
+[Manta SV QC Workflow](https://github.com/user-attachments/files/21695822/FigureS_QC.pdf)
 
 #### QC Workflow Overview
 
