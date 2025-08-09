@@ -97,16 +97,21 @@ Before annotation, it is common to merge SV callsets from multiple samples or ca
 
 **SV Merging with SURVIVOR**
 
-We recommend using [SURVIVOR](https://github.com/fritzsedlazeck/SURVIVOR) for merging.
+Jasmine consolidates SVs of the same type that have a significant reciprocal overlap across different samples.
 
 ```bash
 # Create a file listing all VCF files to be merged
 ls *.vcf > sample_files.txt
 
-# Run SURVIVOR merge
-# Parameters: sample_list, max_distance, min_callers_supporting, type_and_strand_consistency, min_length, output_vcf
-SURVIVOR merge sample_files.txt 1000 1 1 1 0 50 merged_svs.vcf
+# Run Jasmine to merge the VCFs
+# Key parameters include the file list, output file name, and overlap requirements.
+jasmine file_list=sample_files.txt \
+        out_file=merged_svs.vcf \
+        --spec_overlap=0.8 \
+        --threads=8
 ```
+
+
 
 ### Filtering Problematic Regions
 
