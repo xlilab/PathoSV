@@ -81,11 +81,12 @@ We recommend using [SURVIVOR](https://github.com/fritzsedlazeck/SURVIVOR) for me
 ```bash
 # Create a file listing all VCF files to be merged
 ls *.vcf > sample_files.txt
-```
 
 # Run SURVIVOR merge
 # Parameters: sample_list, max_distance, min_callers_supporting, type_and_strand_consistency, min_length, output_vcf
 SURVIVOR merge sample_files.txt 1000 1 1 1 0 50 merged_svs.vcf
+```
+
 ### Filtering Problematic Regions
 
 It is also critical to filter out SVs in known problematic genomic regions (e.g., HLA, ALT contigs). We recommend using the exclusion list from the [SpeedSeq paper](https://github.com/hall-lab/speedseq/blob/master/annotations/exclude.cnvnator_100bp.GRCh38.20170403.bed) and `bedtools subtract`. The scripts `filter_sv.sh` and `filter_sv_add_chr.sh` are provided to assist with this process.
