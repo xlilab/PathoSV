@@ -30,9 +30,9 @@ The web server includes an advanced feature using a Retrieval-Augmented Generati
 
 ## Introduction
 
-Structural variants (SVs) are significant contributors to human genetic diversity and disease, but identifying which variants are pathogenic remains a central challenge in genomics. The pathogenicity of an SV is fundamentally tied to its effect on gene dosage within a relevant biological context.
+Structural variants (SVs) are significant contributors to human genetic diversity and disease, but identifying which variants are pathogenic remains a critical challenge in genomics. The pathogenicity of an SV is fundamentally tied to its effect on gene dosage within a relevant biological context.
 
-PathoSV addresses this challenge by implementing a "transcriptome-aware" strategy. It moves beyond simple variant calling to a quantitative assessment of dosage disruption. The core innovation is the **Transcript Disruption Ratio (TDR)**, a metric that quantifies the proportion of a gene's functional transcript output (in a specific tissue) that is disrupted by an SV. By integrating tissue-specific expression data, PathoSV can effectively prioritize SVs most likely to be pathogenic.
+PathoSV addresses this challenge by implementing a "transcriptome-aware" strategy. It moves beyond simple variant calling to a quantitative assessment of dosage disruption. We introduce the **Transcript Disruption Ratio (TDR)**, a metric that quantifies the proportion of a gene's functional transcript output (in a specific tissue) that is disrupted by an SV. By integrating tissue-specific expression data, PathoSV can effectively prioritize SVs most likely to be pathogenic.
 
 ## Framework Overview
 
