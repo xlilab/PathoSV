@@ -221,6 +221,7 @@ PathoSV/
 │   └── sv_pathogenic_annotaion.py
 │
 └── test/
+```
 ---
 ### Data and Code Availability
 * **PathoSV Code:** The source code for the PathoSV pipeline is available in this repository.
