@@ -199,7 +199,8 @@ PathoSV/
 │
 ├── data/
 │   ├── 1KGP-GTEx.SV.filtered_annots.hg38.txt.gz
-│   └── 1KGP-GTEx.SV.merged.hg38.vcf.gz
+│   ├── 1KGP-GTEx.SV.merged.hg38.vcf.gz
+│   └── GTEx_rareSV_ExpressionOutlier_associations.tsv.gz
 │
 ├── ref_dir/
 │   ├── 1KGP-GTEx.SV.max_AF.hg38.txt.gz
