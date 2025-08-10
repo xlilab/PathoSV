@@ -62,7 +62,7 @@ PathoSV is written in Python 3 and requires the `numpy` and `pandas` libraries.
 
 The annotation scripts require several reference data files. These files should be placed in a directory named `ref_dir/` within your working directory.
 
--   **`1KG_china_gtex_manta_qc_jasmine_merge0.8_max_af.txt`**: Background SV allele frequency database from 196 East Asian (1KGP) and 838 European (GTEx) individuals. Contains columns: `CHROM`, `START`, `END`, `SVTYPE`, `SVLEN`, `Background_AF`.
+-   **`1KGP-GTEx.SV.max_AF.hg38.txt`**: Background SV allele frequency database from 196 East Asian (1KGP) and 838 European (GTEx) individuals. Contains columns: `CHROM`, `START`, `END`, `SVTYPE`, `SVLEN`, `Background_AF`.
 -   **`gene_gencodev26_OMIM_GO_info.txt`**: Gene annotation file combining information from GENCODE v26, OMIM, and Gene Ontology (GO).
 -   **`gencode.v26.annotation_exon_info.txt`**: Exon and transcript annotation from GENCODE v26. Contains 9 columns including `CHROM`, `START`, `END`, `ENSG`, `ENST`, `SYMBOL`.
 -   **`constraint_z_genome_1kb.qc.download.txt.gz`**: Gnocchi genomic constraint scores (z-scores).
@@ -129,7 +129,7 @@ This script annotates your input SVs with their allele frequencies from our back
 
 ```bash
 python /path/to/sv_background_af_annotation.py \
-    --backgound /path/to/ref_dir/1KG_china_gtex_manta_qc_jasmine_merge0.8_max_af.txt \
+    --backgound /path/to/ref_dir/1KGP-GTEx.SV.max_AF.hg38.txt \
     --sv your_input_svs.vcf \
     --o your_output_prefix \
     [--threshold 0.01] \
