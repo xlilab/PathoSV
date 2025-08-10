@@ -164,6 +164,7 @@ python /path/to/sv_pathogenic_annotaion.py \
     --gnocchi /path/to/ref_dir/constraint_z_genome_1kb.qc.download.txt.gz \
     --clinvar /path/to/ref_dir/clinvar_20241027_sv_info.txt \
     --tpm_trans /path/to/ref_dir/55tissues_p10_v26_transcript_tpm_mean.txt
+    --mods /path/to/MoDs_scores.txt.gz
 ```
 
 **Arguments:**
@@ -172,6 +173,7 @@ python /path/to/sv_pathogenic_annotaion.py \
 * `--o`: (Required) Output file prefix.
 * `--tissue`: (Optional) Tissue of interest for TDR calculation (e.g., "Retina", "Cerebellum"). If `None`, transcriptome annotation is skipped.
 * `--gene`, `--exon`, `--gnocchi`, `--clinvar`, `--tpm_trans`: (Optional) Paths to reference files. Defaults to filenames within a local `ref_dir/`.
+* `--mods`: (Optional) Path to the Map of Dosage sensitivity (MoDs) file. This adds a tissue-specific dosage sensitivity score to the output.
 
 ---
 ### Example Output
@@ -181,6 +183,7 @@ The primary output is a text file where each row represents an SV-gene annotatio
 * **Consequence**: How the SV intersects the gene (e.g., `Overlap exon`, `Overlap all gene`).
 * **Gnocchi**: Max genomic constraint score in the SV region.
 * **Phenotypes**: OMIM phenotypes and inheritance patterns.
+* **MoDs_Score**: The tissue-specific dosage sensitivity score. A score < 0.3 suggests the gene is likely haploinsufficient and sensitive to dosage changes in the specified tissue.
 * **GO_BP, GO_CC, GO_MF**: Gene Ontology terms.
 * **ClinVar_CLNSIG**: ClinVar pathogenicity.
 * **Sum_truncated_trascript_tpm**: Sum of TPMs for transcripts disrupted by the SV in the specified tissue.
