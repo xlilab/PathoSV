@@ -192,6 +192,7 @@ The primary output is a text file where each row represents an SV-gene annotatio
 * **Truncated_ratio**: The calculated **TDR**. A value > 0.25 is prioritized as potentially pathogenic.
 ---
 ### Repository Structure
+```text
 PathoSV/
 ├── LICENSE
 ├── README.md
@@ -213,8 +214,7 @@ PathoSV/
 │
 ├── scripts/
 │   ├── filter_manta_sv_pipeline.sh
-│   ├── manta_qc.py
-│   └── null.keep
+│   └── manta_qc.py
 │
 ├── src/
 │   ├── sv_background_af_annotation.py
