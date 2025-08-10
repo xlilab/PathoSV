@@ -68,6 +68,7 @@ The annotation scripts require several reference data files. These files should 
 -   **`constraint_z_genome_1kb.qc.download.txt.gz`**: Gnocchi genomic constraint scores (z-scores).
 -   **`55tissues_p10_v26_transcript_tpm_mean.txt`**: Mean transcript TPM values across 55 tissues (54 from GTEx + retina).
 -   **`clinvar_20241027_sv_info.txt`**: SV information from the ClinVar database, including columns `CHROM`, `START`, `END`, `SVTYPE`, `CLNSIG`, `CLNDN`.
+-   **`MoDs_scores.txt.gz`**: Map of Dosage sensitivity scores for tissue-specific gene constraint assessment. Available from the [xlilab/MoDs](https://github.com/xlilab/MoDs) repository.
 
 **Note:** You can use your own custom annotation files, but they must adhere to the same format and column structure.
 
@@ -163,7 +164,7 @@ python /path/to/sv_pathogenic_annotaion.py \
     --exon /path/to/ref_dir/gencode.v26.annotation_exon_info.txt \
     --gnocchi /path/to/ref_dir/constraint_z_genome_1kb.qc.download.txt.gz \
     --clinvar /path/to/ref_dir/clinvar_20241027_sv_info.txt \
-    --tpm_trans /path/to/ref_dir/55tissues_p10_v26_transcript_tpm_mean.txt
+    --tpm_trans /path/to/ref_dir/55tissues_p10_v26_transcript_tpm_mean.txt \
     --mods /path/to/MoDs_scores.txt.gz
 ```
 
