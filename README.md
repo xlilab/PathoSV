@@ -191,6 +191,37 @@ The primary output is a text file where each row represents an SV-gene annotatio
 * **Gene_tpm**: Total TPM of all transcripts for the gene in that tissue.
 * **Truncated_ratio**: The calculated **TDR**. A value > 0.25 is prioritized as potentially pathogenic.
 ---
+### Repository Structure
+PathoSV/
+├── LICENSE
+├── README.md
+│
+├── data/
+│   ├── 1KGP-GTEx.SV.filtered_annots.hg38.txt.gz
+│   └── 1KGP-GTEx.SV.merged.hg38.vcf.gz
+│
+├── ref_dir/
+│   ├── 1KGP-GTEx.SV.max_AF.hg38.txt.gz
+│   ├── 55tissues_p10_v26_transcript_tpm_mean.txt.gz
+│   ├── clinvar_20241027_sv_info.txt.gz
+│   ├── constraint_z_genome_1kb.qc.download.txt.gz
+│   ├── gencode.v26.annotation_exon_info.txt.gz
+│   ├── gene_gencodev26_OMIM_GO_info.txt.gz
+│   ├── MoDs_scores.txt.gz
+│   ├── IRD_candidate_genes.hg38.txt                   ✨
+│   └── HA_candidate_genes.hg38.txt                    ✨
+│
+├── scripts/
+│   ├── filter_manta_sv_pipeline.sh
+│   ├── manta_qc.py
+│   └── null.keep
+│
+├── src/
+│   ├── sv_background_af_annotation.py
+│   └── sv_pathogenic_annotaion.py
+│
+└── test/
+---
 ### Data and Code Availability
 * **PathoSV Code:** The source code for the PathoSV pipeline is available in this repository.
 * **MoDs:** The Map of Dosage sensitivity (MoDs) metric and code are available at [https://github.com/xlilab/MoDs](https://github.com/xlilab/MoDs).
