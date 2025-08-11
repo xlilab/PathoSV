@@ -189,7 +189,7 @@ The primary output is a text file where each row represents an SV-gene annotatio
 * **ClinVar_CLNSIG**: ClinVar pathogenicity.
 * **Sum_truncated_trascript_tpm**: Sum of TPMs for transcripts disrupted by the SV in the specified tissue.
 * **Gene_tpm**: Total TPM of all transcripts for the gene in that tissue.
-* **Truncated_ratio**: The calculated **TDR**. A value > 0.25 is prioritized as potentially pathogenic.
+* **TDR**: The calculated **TDR**: Transcript Disruption Ratio. A value > 0.25 is prioritized as potentially pathogenic.
 ---
 ### Repository Structure
 ```text
