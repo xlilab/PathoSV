@@ -210,8 +210,8 @@ PathoSV/
 │   ├── gencode.v26.annotation_exon_info.txt.gz
 │   ├── gene_gencodev26_OMIM_GO_info.txt.gz
 │   ├── MoDs_scores.txt.gz
-│   ├── IRD_candidate_genes.hg38.txt                   ✨
-│   └── HA_candidate_genes.hg38.txt                    ✨
+│   ├── IRD_candidate_genes.hg38.txt
+│   └── HA_candidate_genes.hg38.txt
 │
 ├── scripts/
 │   ├── filter_manta_sv_pipeline.sh
