@@ -30,9 +30,9 @@ The web server includes an advanced feature using a Retrieval-Augmented Generati
 
 ## Introduction
 
-Structural variants (SVs) are significant contributors to human genetic diversity and disease, but identifying which variants are pathogenic remains a central challenge in genomics. The pathogenicity of an SV is fundamentally tied to its effect on gene dosage within a relevant biological context.
+Structural variants (SVs) are significant contributors to human genetic diversity and disease, but identifying which variants are pathogenic remains a critical challenge in genomics. The pathogenicity of an SV is fundamentally tied to its effect on gene dosage within a relevant biological context.
 
-PathoSV addresses this challenge by implementing a "transcriptome-aware" strategy. It moves beyond simple variant calling to a quantitative assessment of dosage disruption. The core innovation is the **Transcript Disruption Ratio (TDR)**, a metric that quantifies the proportion of a gene's functional transcript output (in a specific tissue) that is disrupted by an SV. By integrating tissue-specific expression data, PathoSV can effectively prioritize SVs most likely to be pathogenic.
+PathoSV addresses this challenge by implementing a "transcriptome-aware" strategy. It moves beyond simple variant calling to a quantitative assessment of dosage disruption. We introduce **Transcript Disruption Ratio (TDR)**, a metric that quantifies the proportion of a gene's functional transcript output (in a specific tissue) that is disrupted by an SV. By integrating tissue-specific expression data, PathoSV can effectively prioritize SVs most likely to be pathogenic.
 
 ## Framework Overview
 
@@ -62,12 +62,13 @@ PathoSV is written in Python 3 and requires the `numpy` and `pandas` libraries.
 
 The annotation scripts require several reference data files. These files should be placed in a directory named `ref_dir/` within your working directory.
 
--   **`1KG_china_gtex_manta_qc_jasmine_merge0.8_max_af.txt`**: Background SV allele frequency database from 196 East Asian (1KGP) and 838 European (GTEx) individuals. Contains columns: `CHROM`, `START`, `END`, `SVTYPE`, `SVLEN`, `Background_AF`.
+-   **`1KGP-GTEx.SV.max_AF.hg38.txt`**: Background SV allele frequency database from 196 East Asian (1KGP) and 838 European (GTEx) individuals. Contains columns: `CHROM`, `START`, `END`, `SVTYPE`, `SVLEN`, `Background_AF`.
 -   **`gene_gencodev26_OMIM_GO_info.txt`**: Gene annotation file combining information from GENCODE v26, OMIM, and Gene Ontology (GO).
 -   **`gencode.v26.annotation_exon_info.txt`**: Exon and transcript annotation from GENCODE v26. Contains 9 columns including `CHROM`, `START`, `END`, `ENSG`, `ENST`, `SYMBOL`.
 -   **`constraint_z_genome_1kb.qc.download.txt.gz`**: Gnocchi genomic constraint scores (z-scores).
 -   **`55tissues_p10_v26_transcript_tpm_mean.txt`**: Mean transcript TPM values across 55 tissues (54 from GTEx + retina).
 -   **`clinvar_20241027_sv_info.txt`**: SV information from the ClinVar database, including columns `CHROM`, `START`, `END`, `SVTYPE`, `CLNSIG`, `CLNDN`.
+-   **`MoDs_scores.txt.gz`**: Map of Dosage sensitivity scores for tissue-specific gene constraint assessment. Available from the [xlilab/MoDs](https://github.com/xlilab/MoDs) repository.
 
 **Note:** You can use your own custom annotation files, but they must adhere to the same format and column structure.
 
@@ -129,7 +130,7 @@ This script annotates your input SVs with their allele frequencies from our back
 
 ```bash
 python /path/to/sv_background_af_annotation.py \
-    --backgound /path/to/ref_dir/1KG_china_gtex_manta_qc_jasmine_merge0.8_max_af.txt \
+    --backgound /path/to/ref_dir/1KGP-GTEx.SV.max_AF.hg38.txt \
     --sv your_input_svs.vcf \
     --o your_output_prefix \
     [--threshold 0.01] \
@@ -163,7 +164,8 @@ python /path/to/sv_pathogenic_annotaion.py \
     --exon /path/to/ref_dir/gencode.v26.annotation_exon_info.txt \
     --gnocchi /path/to/ref_dir/constraint_z_genome_1kb.qc.download.txt.gz \
     --clinvar /path/to/ref_dir/clinvar_20241027_sv_info.txt \
-    --tpm_trans /path/to/ref_dir/55tissues_p10_v26_transcript_tpm_mean.txt
+    --tpm_trans /path/to/ref_dir/55tissues_p10_v26_transcript_tpm_mean.txt \
+    --mods /path/to/MoDs_scores.txt.gz
 ```
 
 **Arguments:**
@@ -172,6 +174,7 @@ python /path/to/sv_pathogenic_annotaion.py \
 * `--o`: (Required) Output file prefix.
 * `--tissue`: (Optional) Tissue of interest for TDR calculation (e.g., "Retina", "Cerebellum"). If `None`, transcriptome annotation is skipped.
 * `--gene`, `--exon`, `--gnocchi`, `--clinvar`, `--tpm_trans`: (Optional) Paths to reference files. Defaults to filenames within a local `ref_dir/`.
+* `--mods`: (Optional) Path to the Map of Dosage sensitivity (MoDs) file. This adds a tissue-specific dosage sensitivity score to the output.
 
 ---
 ### Example Output
@@ -181,11 +184,45 @@ The primary output is a text file where each row represents an SV-gene annotatio
 * **Consequence**: How the SV intersects the gene (e.g., `Overlap exon`, `Overlap all gene`).
 * **Gnocchi**: Max genomic constraint score in the SV region.
 * **Phenotypes**: OMIM phenotypes and inheritance patterns.
+* **MoDs_Score**: The tissue-specific dosage sensitivity score. A score < 0.3 suggests the gene is likely haploinsufficient and sensitive to dosage changes in the specified tissue.
 * **GO_BP, GO_CC, GO_MF**: Gene Ontology terms.
 * **ClinVar_CLNSIG**: ClinVar pathogenicity.
 * **Sum_truncated_trascript_tpm**: Sum of TPMs for transcripts disrupted by the SV in the specified tissue.
 * **Gene_tpm**: Total TPM of all transcripts for the gene in that tissue.
 * **Truncated_ratio**: The calculated **TDR**. A value > 0.25 is prioritized as potentially pathogenic.
+---
+### Repository Structure
+```text
+PathoSV/
+├── LICENSE
+├── README.md
+│
+├── data/
+│   ├── 1KGP-GTEx.SV.filtered_annots.hg38.txt.gz
+│   ├── 1KGP-GTEx.SV.merged.hg38.vcf.gz
+│   └── GTEx_rareSV_ExpressionOutlier_associations.tsv.gz
+│
+├── ref_dir/
+│   ├── 1KGP-GTEx.SV.max_AF.hg38.txt.gz
+│   ├── 55tissues_p10_v26_transcript_tpm_mean.txt.gz
+│   ├── clinvar_20241027_sv_info.txt.gz
+│   ├── constraint_z_genome_1kb.qc.download.txt.gz
+│   ├── gencode.v26.annotation_exon_info.txt.gz
+│   ├── gene_gencodev26_OMIM_GO_info.txt.gz
+│   ├── MoDs_scores.txt.gz
+│   ├── IRD_candidate_genes.hg38.txt
+│   └── HA_candidate_genes.hg38.txt
+│
+├── scripts/
+│   ├── filter_manta_sv_pipeline.sh
+│   └── manta_qc.py
+│
+├── src/
+│   ├── sv_background_af_annotation.py
+│   └── sv_pathogenic_annotaion.py
+│
+└── test/
+```
 ---
 ### Data and Code Availability
 * **PathoSV Code:** The source code for the PathoSV pipeline is available in this repository.
