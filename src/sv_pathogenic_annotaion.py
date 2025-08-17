@@ -22,7 +22,8 @@ parser.add_argument('--exon', type=str, default = "None", metavar = "", help='Ex
 parser.add_argument('--gnocchi', type=str, default = "None", metavar = "", help='Gnocchi score file which is a genomic mutational constraint map calculated from gnomAD dataset.')
 parser.add_argument('--clinvar', type=str, default = "None", metavar = "", help='Clinvar SV info file.')
 parser.add_argument('--tissue', type=str, default = "None", metavar = "", help='Interesting tissue for annotation. If value is None, output file will not contain transcriptom annotation.')
-parser.add_argument('--tpm_trans', type=str, default = "None", metavar = "", help='Transcript TPM matrix file.')
+parser.add_argument('--tpm_trans', type=str, default = "None", metavar = "", help='Transcript TPM matrix file. Default is None.')
+parser.add_argument('--mods', type=str, default = "None", metavar = "", help='Path to the Map of Dosage sensitivity (MoDs) file. Default is None.')
 parser.add_argument('--sv', type=str, required=True, metavar = "", help='SV file which contains CHROM, START, END, SVTYPE at least.')
 parser.add_argument('-o', '--output_prefix', type=str, required=True, metavar = "", help='Output file prefix.')
 args = parser.parse_args()
@@ -264,6 +265,7 @@ result_anno_df = pd.DataFrame({"IND": tmp_IND,"SYMBOL": tmp_SYMBOL, "GENE_TYPE":
 result_df = pd.merge(left=sv_info, right=result_anno_df, on="IND")
 del(result_anno_df)
 
+
 # add tpm annotation
 if select_tissue != "None":
     result_df_tpm = pd.merge(left=result_df, right=transcript_tpm[["ENST", select_tissue]], on="ENST", how="left")
@@ -306,11 +308,17 @@ if select_tissue != "None":
 
     tpm_percent_df = pd.DataFrame({"Sum_truncated_trascript_TPM": tpm_sum_truncated,
                                    "Gene_TPM": tpm_sum_all,
-                                   "Truncated_Ratio": tpm_percent,
+                                   "TDR": tpm_percent,
                                    "Top_truncated_trascript_TPM_rank": tpm_rank})
     result_df_tpm_unique.index = range(len(result_df_tpm_unique))
     result_df_tpm_unique_tpm_percent_df = pd.concat([result_df_tpm_unique, tpm_percent_df], axis=1)
-
-    result_df_tpm_unique_tpm_percent_df.to_csv(output_prefix + "_" +select_tissue + "_transcriptom_annotation.txt", sep="\t", index=False, header=True)
+    
+    if (args.mods != "None"):
+        mods_anno = pd.read_table(args.mods)[["ENSG", select_tissue]]
+        mods_anno.columns = ["ENSG", "MODS"]
+        result_df_tpm_unique_tpm_percent_mods_df = pd.merge(left=result_df_tpm_unique_tpm_percent_df, right=mods_anno, how="left", on="ENSG")
+        result_df_tpm_unique_tpm_percent_mods_df.to_csv(output_prefix + "_" +select_tissue + "_transcriptom_annotation.txt", sep="\t", index=False, header=True)
+    else:
+        result_df_tpm_unique_tpm_percent_df.to_csv(output_prefix + "_" +select_tissue + "_transcriptom_annotation.txt", sep="\t", index=False, header=True)
 else:
     result_df.to_csv(output_prefix + "_genome_annotation.txt", sep="\t", index=False, header=True)
