@@ -200,6 +200,7 @@ PathoSV/
 ├── data/
 │   ├── 1KGP-GTEx.SV.filtered_annots.hg38.txt.gz
 │   ├── 1KGP-GTEx.SV.merged.hg38.vcf.gz
+│   ├── GTEx.expression_outliers.cross_tissue_medz.tsv.gz
 │   └── GTEx_rareSV_ExpressionOutlier_associations.tsv.gz
 │
 ├── ref_dir/
