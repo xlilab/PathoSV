@@ -64,9 +64,10 @@ The annotation scripts require several reference data files. These files should 
 
 -   **`1KGP-GTEx.SV.max_AF.hg38.txt`**: Background SV allele frequency database from 196 East Asian (1KGP) and 838 European (GTEx) individuals. Contains columns: `CHROM`, `START`, `END`, `SVTYPE`, `SVLEN`, `Background_AF`.
 -   **`gene_gencodev26_OMIM_GO_info.txt`**: Gene annotation file combining information from GENCODE v26, OMIM, and Gene Ontology (GO).
--   **`gencode.v26.annotation_exon_info.txt`**: Exon and transcript annotation from GENCODE v26. Contains 9 columns including `CHROM`, `START`, `END`, `ENSG`, `ENST`, `SYMBOL`.
+-   **`gencode.v26.annotation_exon_info_with_mane.txt`**: Exon and transcript annotation from GENCODE v26. Contains 10 columns including `CHROM`, `CLASS`, `START`, `END`, `ENSG`, `ENST`, `GENE_TYPE`, `SYMBOL`, `TRANS_TYPE`, `MANE`.
 -   **`constraint_z_genome_1kb.qc.download.txt.gz`**: Gnocchi genomic constraint scores (z-scores).
--   **`55tissues_p10_v26_transcript_tpm_mean.txt`**: Mean transcript TPM values across 55 tissues (54 from GTEx + retina).
+-   **`55tissues_p10_v26_transcript_tpm_mean.txt`**: Mean transcript TPM values across 55 tissues (54 from GTEx v8 + retina).
+-   **`14tissues_long_reads_v26_transcript_tpm_mean_from_gtex_v9.txt.gz`**: Mean transcript TPM values across 14 tissues from GTEx v9 long read RNASeq.
 -   **`clinvar_20241027_sv_info.txt`**: SV information from the ClinVar database, including columns `CHROM`, `START`, `END`, `SVTYPE`, `CLNSIG`, `CLNDN`.
 -   **`MoDs_scores.txt.gz`**: Map of Dosage sensitivity scores for tissue-specific gene constraint assessment. Available from the [xlilab/MoDs](https://github.com/xlilab/MoDs) repository.
 
