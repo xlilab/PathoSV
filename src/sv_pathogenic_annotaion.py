@@ -18,7 +18,7 @@ logger.addHandler(ch)
 # Get Parameter
 parser = argparse.ArgumentParser(description='SV transcriptome pathogenic annotation')
 parser.add_argument('--gene', type=str, default = "None", metavar = "", help='Gene and phenotype annotation file.')
-parser.add_argument('--exon', type=str, default = "None", metavar = "", help='Exon annotation file.')
+parser.add_argument('--exon', type=str, default = "None", metavar = "", help='Exon and transcript annotation file.')
 parser.add_argument('--gnocchi', type=str, default = "None", metavar = "", help='Gnocchi score file which is a genomic mutational constraint map calculated from gnomAD dataset.')
 parser.add_argument('--clinvar', type=str, default = "None", metavar = "", help='Clinvar SV info file.')
 parser.add_argument('--tissue', type=str, default = "None", metavar = "", help='Interesting tissue for annotation. If value is None, output file will not contain transcriptom annotation.')
@@ -36,7 +36,7 @@ else:
 if args.exon != "None":
     hg38_exon = pd.read_table(args.exon)
 else:
-    hg38_exon = pd.read_table("ref_dir/gencode.v26.annotation_exon_info.txt.gz")
+    hg38_exon = pd.read_table("ref_dir/gencode.v26.annotation_exon_info_with_mane.txt.gz")
 if args.gnocchi != "None":
     gnocchi_info = pd.read_table(args.gnocchi)[["chrom", "start", "end", "z"]]
 else:
@@ -67,6 +67,7 @@ tmp_Consequence = []
 tmp_ENSG = []
 tmp_ENST = []
 tmp_TRANS_TYPE = []
+tmp_TRANS_MANE = []
 tmp_Gnocchi = []
 tmp_MIM = []
 tmp_Phenotypes = []
@@ -183,8 +184,9 @@ for i in range(len(sv_info)):
                     tmp_GENE_TYPE.append(tmp_overlap_gene_list.loc[j, "GENE_TYPE"])
                     tmp_Consequence.append("Overlap all gene")
                     tmp_ENSG.append(tmp_overlap_gene_list.loc[j, "ENSG"])
-                    tmp_ENST.append(k)
+                    tmp_ENST.append(k)	    
                     tmp_TRANS_TYPE.append(tmp_hg38_exon.loc[tmp_hg38_exon.ENST == k, "TRANS_TYPE"].unique().tolist()[0])
+                    tmp_TRANS_MANE.append(tmp_hg38_exon.loc[tmp_hg38_exon.ENST == k, "MANE"].unique().tolist()[0])
                     tmp_Gnocchi.append(tmp_gnocchi_score)
                     tmp_MIM.append(tmp_overlap_gene_list.loc[j, "MIM"])
                     tmp_Phenotypes.append(tmp_overlap_gene_list.loc[j, "Phenotypes"])
@@ -212,6 +214,7 @@ for i in range(len(sv_info)):
                         tmp_ENSG.append(tmp_overlap_gene_list.loc[j, "ENSG"])
                         tmp_ENST.append(k)
                         tmp_TRANS_TYPE.append(tmp_hg38_exon.loc[tmp_hg38_exon.ENST == k, "TRANS_TYPE"].unique().tolist()[0])
+                        tmp_TRANS_MANE.append(tmp_hg38_exon.loc[tmp_hg38_exon.ENST == k, "MANE"].unique().tolist()[0])
                         tmp_Gnocchi.append(tmp_gnocchi_score)
                         tmp_MIM.append(tmp_overlap_gene_list.loc[j, "MIM"])
                         tmp_Phenotypes.append(tmp_overlap_gene_list.loc[j, "Phenotypes"])
@@ -229,6 +232,7 @@ for i in range(len(sv_info)):
                     tmp_ENSG.append(tmp_overlap_gene_list.loc[j, "ENSG"])
                     tmp_ENST.append("-")
                     tmp_TRANS_TYPE.append("-")
+                    tmp_TRANS_MANE.append("-")
                     tmp_Gnocchi.append(tmp_gnocchi_score)
                     tmp_MIM.append(tmp_overlap_gene_list.loc[j, "MIM"])
                     tmp_Phenotypes.append(tmp_overlap_gene_list.loc[j, "Phenotypes"])
@@ -247,6 +251,7 @@ for i in range(len(sv_info)):
         tmp_ENSG.append("-")
         tmp_ENST.append("-")
         tmp_TRANS_TYPE.append("-")
+        tmp_TRANS_MANE.append("-")
         tmp_Gnocchi.append(tmp_gnocchi_score)
         tmp_MIM.append("-")
         tmp_Phenotypes.append("-")
@@ -258,7 +263,7 @@ for i in range(len(sv_info)):
         tmp_ClinVar_ALLELEID.append(tmp_clinvar_id)
 
 result_anno_df = pd.DataFrame({"IND": tmp_IND,"SYMBOL": tmp_SYMBOL, "GENE_TYPE": tmp_GENE_TYPE, "Consequence": tmp_Consequence,
-                               "ENSG": tmp_ENSG, "ENST": tmp_ENST, "TRANS_TYPE": tmp_TRANS_TYPE,"Gnocchi": tmp_Gnocchi, 
+                               "ENSG": tmp_ENSG, "ENST": tmp_ENST, "TRANS_TYPE": tmp_TRANS_TYPE,"MANE": tmp_TRANS_MANE,"Gnocchi": tmp_Gnocchi, 
                                "MIM": tmp_MIM, "Phenotypes": tmp_Phenotypes,"GO_MF": tmp_GO_MF, "GO_BP": tmp_GO_BP, "GO_CC": tmp_GO_CC,
                                "ClinVar_CLNSIG": tmp_ClinVar_CLNSIG, "ClinVar_CLNDN": tmp_ClinVar_CLNDN,
                                "ClinVar_ALLELEID": tmp_ClinVar_ALLELEID})
@@ -274,14 +279,27 @@ if select_tissue != "None":
     result_df_tpm_unique = result_df_tpm[sv_info.columns.tolist() + ["SYMBOL", "ENSG", "GENE_TYPE", "Consequence", "Gnocchi","MIM","Phenotypes","GO_MF", "GO_BP", "GO_CC","ClinVar_CLNSIG", "ClinVar_CLNDN", "ClinVar_ALLELEID"]].drop_duplicates()
     result_df_tpm_unique.index = range(len(result_df_tpm_unique))
 
+    contain_mane_trans = []
     tpm_sum_truncated = []
     tpm_sum_all = []
     tpm_percent = []
     tpm_rank = []
 
     for i in range(len(result_df_tpm_unique)):
+        #ind_val = result_df_tpm_unique.iloc[i, :].IND
+        #ensg_val = result_df_tpm_unique.iloc[i, :].ENSG
+
+        
+        tmp_trans_tpm_df = result_df_tpm.loc[(result_df_tpm.IND == result_df_tpm_unique.iloc[i,:].IND) & (result_df_tpm.ENSG == result_df_tpm_unique.iloc[i,:].ENSG), ["ENST","MANE", select_tissue]].drop_duplicates().copy()
+
+        if(tmp_trans_tpm_df['MANE'] == '-').all():
+            contain_mane_trans.append("-")
+        elif(tmp_trans_tpm_df['MANE'] == 'OTHER').all():
+            contain_mane_trans.append("OTHER")
+        else:
+            contain_mane_trans.append("MANE")
+
         if (result_df_tpm_unique.loc[i,"Consequence"] != "Overlap intron") & (result_df_tpm_unique.loc[i,"Consequence"] != "Overlap intergenic"):
-            tmp_trans_tpm_df = result_df_tpm.loc[(result_df_tpm.IND == result_df_tpm_unique.iloc[i,:].IND) & (result_df_tpm.ENSG == result_df_tpm_unique.iloc[i,:].ENSG), ["ENST", select_tissue]].drop_duplicates().copy()
             tmp_gene_tpm_df = transcript_tpm.loc[transcript_tpm.ENSG == result_df_tpm_unique.iloc[i,:].ENSG, ["ENST", select_tissue]]
             tmp_sum_truncated = round(tmp_trans_tpm_df[select_tissue].sum(),3)
             tmp_sum_all = round(tmp_gene_tpm_df[select_tissue].sum(),3)
@@ -306,7 +324,8 @@ if select_tissue != "None":
             tpm_percent.append("-")
             tpm_rank.append("-")
 
-    tpm_percent_df = pd.DataFrame({"Sum_truncated_trascript_TPM": tpm_sum_truncated,
+    tpm_percent_df = pd.DataFrame({"MANE": contain_mane_trans,
+				   "Sum_truncated_trascript_TPM": tpm_sum_truncated,
                                    "Gene_TPM": tpm_sum_all,
                                    "TDR": tpm_percent,
                                    "Top_truncated_trascript_TPM_rank": tpm_rank})
